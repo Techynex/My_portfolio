@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const functions = require('@netlify/functions');
+const querystring = require('querystring');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -10,22 +11,25 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.handler = async (event, context) => {
-  const { name, email, message } = JSON.parse(event.body);
-
-  const mailOptions = {
-    from: email,
-    to: process.env.EMAIL_USER,
-    subject: 'Contact Form Submission',
-    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-  };
-
   try {
+    // Handle URL-encoded data
+    const { name, email, message } = querystring.parse(event.body);
+
+    const mailOptions = {
+      from: email,
+      to: process.env.EMAIL_USER,
+      subject: 'Contact Form Submission',
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+    };
+
     await transporter.sendMail(mailOptions);
+
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Email sent successfully' }),
     };
   } catch (error) {
+    console.error('Error:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: 'Failed to send email' }),
