@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer');
-const functions = require('@netlify/functions');
 const querystring = require('querystring');
 
 const transporter = nodemailer.createTransport({
