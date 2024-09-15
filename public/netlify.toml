@@ -1,0 +1,2 @@
+[build]
+  functions = "functions"  # This should be a relative path to your functions directory
